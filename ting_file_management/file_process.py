@@ -26,7 +26,11 @@ def process(path_file, instance: AbstractQueue):
 
 
 def remove(instance):
-    """Aqui irá sua implementação"""
+    try:
+        info = instance.dequeue()
+        print(f"Arquivo {info['nome_do_arquivo']} removido com sucesso")
+    except IndexError:
+        print("Não há elementos")
 
 
 def file_metadata(instance, position):

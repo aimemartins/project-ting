@@ -1,13 +1,15 @@
 from ting_file_management.file_management import txt_importer
+from ting_file_management.abstract_queue import AbstractQueue
+import sys
 
 
-def process(path_file, instance):
-    file_name = path_file.split("/")[
-        -1
-    ]  # Obtém apenas o nome do arquivo a partir do caminho
+def process(path_file, instance: AbstractQueue):
     # Deve-se ignorar arquivos que já tenham sido processados anteriormente
-    if any(file_name == item["nome_do_arquivo"] for item in instance._items):
-        print(f"O arquivo {file_name} já foi processado anteriormente.")
+    if any(path_file == item["nome_do_arquivo"] for item in instance._items):
+        print(
+            f"O arquivo {path_file} já foi processado anteriormente.",
+            file=sys.stderr,
+        )
         return
     # Deve-se ignorar arquivos que não sejam do tipo .txt
     lines = txt_importer(path_file)
@@ -15,14 +17,12 @@ def process(path_file, instance):
     if len(lines) > 0:
         # Deve-se adicionar o arquivo na fila
         data = {
-            "nome_do_arquivo": file_name,
+            "nome_do_arquivo": path_file,
             "qtd_linhas": len(lines),
             "linhas_do_arquivo": lines,
         }
         instance.enqueue(data)
         print(data)
-    else:
-        print(f"O arquivo {file_name} está vazio.")
 
 
 def remove(instance):
